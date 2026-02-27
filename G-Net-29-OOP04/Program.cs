@@ -1,4 +1,4 @@
-﻿#region Part 01
+#region Part 01
 
 /*
 Q1:
@@ -22,25 +22,24 @@ sealed: prevents further overriding.
 
 #endregion
 
-
-#region Part 02
+#region Part 02 - Practical (Continue From Assignment 03 + Add Polymorphism)
 
 #region Base Class: Ticket
 public class Ticket
 {
     private static int counter = 0;
-    private decimal price;
 
     public int TicketId { get; }
     public string MovieName { get; set; }
+
+    private decimal price;
 
     public decimal Price
     {
         get => price;
         private set
         {
-            if (value <= 0)
-                throw new ArgumentException("Price must be greater than 0");
+            if (value <= 0) throw new ArgumentException("Price must be greater than 0");
             price = value;
         }
     }
@@ -50,11 +49,11 @@ public class Ticket
     public Ticket(string movieName, decimal price)
     {
         MovieName = movieName;
-        SetPrice(price);
         TicketId = ++counter;
+        SetPrice(price);
     }
 
-    // Method Overloading
+    // Overloading
     public void SetPrice(decimal price)
     {
         Console.WriteLine($"Setting price directly: {price}");
@@ -68,28 +67,25 @@ public class Ticket
         Price = result;
     }
 
-    // Virtual Method for Polymorphism
+    // Polymorphism
     public virtual void PrintTicket()
     {
         Console.WriteLine($"Ticket #{TicketId} | {MovieName} | Price: {Price} EGP | After Tax: {PriceAfterTax:F2} EGP");
     }
 
-    public static int GetTotalTickets()
-    {
-        return counter;
-    }
+    public static int GetTotalTickets() => counter;
 }
 #endregion
 
-#region Child Classes (Override)
+#region Child Classes
 public class StandardTicket : Ticket
 {
     public string SeatNumber { get; set; }
 
-    public StandardTicket(string movieName, decimal price, string seat)
+    public StandardTicket(string movieName, decimal price, string seatNumber)
         : base(movieName, price)
     {
-        SeatNumber = seat;
+        SeatNumber = seatNumber;
     }
 
     public override void PrintTicket()
@@ -102,12 +98,12 @@ public class StandardTicket : Ticket
 public class VIPTicket : Ticket
 {
     public bool LoungeAccess { get; set; }
-    public decimal ServiceFee { get; } = 50;
+    public decimal ServiceFee { get; } = 50m;
 
-    public VIPTicket(string movieName, decimal price, bool lounge)
+    public VIPTicket(string movieName, decimal price, bool loungeAccess)
         : base(movieName, price)
     {
-        LoungeAccess = lounge;
+        LoungeAccess = loungeAccess;
     }
 
     public override void PrintTicket()
@@ -122,7 +118,7 @@ public class IMAXTicket : Ticket
     public bool Is3D { get; set; }
 
     public IMAXTicket(string movieName, decimal price, bool is3D)
-        : base(movieName, is3D ? price + 30 : price)
+        : base(movieName, is3D ? price + 30m : price) 
     {
         Is3D = is3D;
     }
@@ -138,22 +134,15 @@ public class IMAXTicket : Ticket
 #region Composition Classes
 public sealed class Projector
 {
-    public void Start()
-    {
-        Console.WriteLine("Projector started.");
-    }
-
-    public void Stop()
-    {
-        Console.WriteLine("Projector stopped.");
-    }
+    public void Start() => Console.WriteLine("Projector started.");
+    public void Stop() => Console.WriteLine("Projector stopped.");
 }
 
 public class Cinema
 {
     public string CinemaName { get; set; }
-    private Projector projector;
-    private Ticket[] tickets = new Ticket[20];
+    private readonly Projector projector;
+    private readonly Ticket[] tickets = new Ticket[20];
 
     public Cinema(string name)
     {
@@ -183,20 +172,20 @@ public class Cinema
                 return;
             }
         }
+        Console.WriteLine("Cinema is full!");
     }
 
-    // Polymorphism here
+  
     public void PrintAllTickets()
     {
         Console.WriteLine("\n========== All Tickets ==========");
         foreach (var t in tickets)
         {
-            if (t != null)
-                t.PrintTicket();
+            if (t != null) t.PrintTicket();
         }
     }
 
-    // Static method required in assignment
+   
     public static void ProcessTicket(Ticket t)
     {
         Console.WriteLine("\n========== Process Single Ticket ==========");
@@ -207,8 +196,7 @@ public class Cinema
 
 #endregion
 
-
-#region Main
+#region Main (Assignment 04 Flow)
 class Program
 {
     static void Main()
@@ -217,12 +205,12 @@ class Program
         cinema.OpenCinema();
 
         Console.WriteLine("\n========== SetPrice Test ==========");
-        StandardTicket t1 = new StandardTicket("Inception", 120, "A-5");
-        t1.SetPrice(150);
-        t1.SetPrice(100, 1.5m);
+        StandardTicket t1 = new StandardTicket("Inception", 120m, "A-5");
+        t1.SetPrice(150m);
+        t1.SetPrice(100m, 1.5m);
 
-        VIPTicket t2 = new VIPTicket("Avengers", 200, true);
-        IMAXTicket t3 = new IMAXTicket("Dune", 180, false);
+        VIPTicket t2 = new VIPTicket("Avengers", 200m, true);
+        IMAXTicket t3 = new IMAXTicket("Dune", 180m, false);
 
         cinema.AddTicket(t1);
         cinema.AddTicket(t2);
