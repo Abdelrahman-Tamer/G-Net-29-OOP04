@@ -1,4 +1,4 @@
-﻿#region Part 01 - Theoretical Answers (Assignment 04)
+﻿#region Part 01
 
 /*
 Q1:
@@ -23,7 +23,7 @@ sealed: prevents further overriding.
 #endregion
 
 
-#region Part 02 - Practical (Polymorphism Movie Ticket System)
+#region Part 02
 
 #region Base Class: Ticket
 public class Ticket
